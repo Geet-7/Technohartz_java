@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Interactive Core Java Workshop — a full-screen presentation for absolute beginners." />
+<title>Core Java Workshop — Interactive Presentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E" />
+</head>
+<body>
+
+<!-- ================= TOP BAR ================= -->
+<header class="topbar">
+  <div class="topbar__left">
+    <button class="icon-btn" id="menuBtn" title="Toggle outline (M)" aria-label="Toggle outline">
+      <span class="burger"></span>
+    </button>
+    <div class="brand">
+      <span class="brand__logo">☕</span>
+      <span class="brand__text">Core<span class="brand__accent">Java</span> · Workshop</span>
+    </div>
+  </div>
+
+  <div class="topbar__center">
+    <div class="search">
+      <span class="search__ic">🔍</span>
+      <input id="searchInput" type="text" placeholder="Search slides…  (press /)" autocomplete="off" spellcheck="false" />
+      <div class="search__results" id="searchResults" role="listbox" hidden></div>
+    </div>
+  </div>
+
+  <div class="topbar__right">
+    <span class="slide-pos" id="slidePos">0 / 0</span>
+    <button class="icon-btn" id="fsBtn" title="Fullscreen (F)" aria-label="Fullscreen">⛶</button>
+  </div>
+</header>
+
+<!-- progress bar (deck progress) -->
+<div class="deck-progress" id="deckProgress"><span id="deckBar"></span></div>
+
+<!-- ================= APP ================= -->
+<div class="app" id="app">
+
+  <!-- SIDEBAR OUTLINE -->
+  <aside class="sidebar" id="sidebar" aria-label="Outline">
+    <div class="sidebar__head">
+      <span class="sidebar__title">Outline</span>
+      <span class="sidebar__sub" id="outlineSub">12 Modules</span>
+    </div>
+    <nav class="sidebar__nav" id="outline"><div class="loading">Loading…</div></nav>
+  </aside>
+  <div class="sb-backdrop" id="sbBackdrop"></div>
+
+  <!-- STAGE -->
+  <main class="stage" id="stage">
+    <div class="stage__fit" id="stageFit">
+      <article class="slide" id="slide"><!-- rendered by JS --></article>
+    </div>
+  </main>
+</div>
+
+<!-- ================= NAV CONTROLS ================= -->
+<nav class="controls" id="controls">
+  <button class="ctrl ctrl--prev" id="prevBtn" title="Previous (←)">
+    <span class="ctrl__ic">‹</span><span class="ctrl__lab">Prev</span>
+  </button>
+  <div class="ctrl__dots" id="dots"><!-- dots --></div>
+  <button class="ctrl ctrl--next" id="nextBtn" title="Next (→)">
+    <span class="ctrl__lab">Next</span><span class="ctrl__ic">›</span>
+  </button>
+</nav>
+
+<!-- ================= TOAST ================= -->
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="content.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
