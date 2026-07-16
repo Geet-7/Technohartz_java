@@ -159,7 +159,9 @@
           li.appendChild(el('div','practice__q', it.q));
           var det=el('details','solution');
           det.appendChild(el('summary','<span class="caret">▶</span> Show Answer'));
-          det.appendChild(el('div','solution__body', para(it.a)));
+          var body=el('div','solution__body');
+          body.appendChild(para(it.a));
+          det.appendChild(body);
           li.appendChild(det);
           list.appendChild(li);
         });
@@ -436,9 +438,23 @@
   }
 
   /* ---------- Sidebar ---------- */
-  function openSidebar(){ sidebarEl.classList.add('open'); sbBackdrop.classList.add('show'); }
-  function closeSidebar(){ sidebarEl.classList.remove('open'); sbBackdrop.classList.remove('show'); }
-  function toggleSidebar(){ sidebarEl.classList.contains('open') ? closeSidebar() : openSidebar(); }
+  function openSidebar(){
+    document.body.classList.remove('sidebar-collapsed');
+    sidebarEl.classList.add('open');
+    sbBackdrop.classList.add('show');
+  }
+  function closeSidebar(){
+    document.body.classList.add('sidebar-collapsed');
+    sidebarEl.classList.remove('open');
+    sbBackdrop.classList.remove('show');
+  }
+  function toggleSidebar(){
+    if (document.body.classList.contains('sidebar-collapsed')) {
+      openSidebar();
+    } else {
+      closeSidebar();
+    }
+  }
 
   /* ---------- Toast ---------- */
   var toastTimer;
@@ -453,13 +469,25 @@
   /* ---------- Persistence ---------- */
   function saveState(){
     try{
-      localStorage.setItem('cjw_state', JSON.stringify({i:current, done:Array.from(done)}));
+      localStorage.setItem('cjw_state', JSON.stringify({
+        i: current,
+        done: Array.from(done),
+        theme: document.body.classList.contains('light-theme') ? 'light' : 'dark',
+        projector: document.body.classList.contains('projector-mode')
+      }));
     }catch(e){}
   }
   function loadState(){
     try{
       var s = JSON.parse(localStorage.getItem('cjw_state'));
-      if(s){ current = s.i||0; (s.done||[]).forEach(function(x){ done.add(x); }); }
+      if(s){
+        current = s.i||0;
+        (s.done||[]).forEach(function(x){ done.add(x); });
+        if(s.theme === 'light'){ document.body.classList.add('light-theme'); }
+        else { document.body.classList.remove('light-theme'); }
+        if(s.projector === true){ document.body.classList.add('projector-mode'); }
+        else { document.body.classList.remove('projector-mode'); }
+      }
     }catch(e){}
   }
 
@@ -475,8 +503,23 @@
     });
   });
 
+  /* ---------- Theme & Projector ---------- */
+  function toggleTheme(){
+    closeSidebar();
+    document.body.classList.toggle('light-theme');
+    saveState();
+    toast(document.body.classList.contains('light-theme') ? 'Light Theme enabled' : 'Dark Theme enabled');
+  }
+  function toggleProjectorMode(){
+    closeSidebar();
+    document.body.classList.toggle('projector-mode');
+    saveState();
+    toast(document.body.classList.contains('projector-mode') ? 'Projector Mode enabled' : 'Projector Mode disabled');
+  }
+
   /* ---------- Fullscreen ---------- */
   function toggleFullscreen(){
+    closeSidebar();
     if(!document.fullscreenElement){
       document.documentElement.requestFullscreen().catch(function(err){
         toast('Error enabling fullscreen: ' + err.message);
@@ -509,6 +552,8 @@
     $('menuBtn').onclick = toggleSidebar;
     sbBackdrop.onclick = closeSidebar;
     $('fsBtn').onclick = toggleFullscreen;
+    $('themeBtn').onclick = toggleTheme;
+    $('projectorBtn').onclick = toggleProjectorMode;
 
     searchInput.addEventListener('input', function(){ runSearch(this.value); });
     searchInput.addEventListener('keydown', function(e){
@@ -523,12 +568,14 @@
       var tag = (e.target.tagName||'').toLowerCase();
       if(tag==='input' || tag==='textarea') return;
       switch(e.key){
-        case 'ArrowRight': case 'ArrowDown': case 'PageDown': case ' ': e.preventDefault(); next(); break;
-        case 'ArrowLeft': case 'ArrowUp': case 'PageUp': e.preventDefault(); prev(); break;
+        case 'ArrowRight': case 'PageDown': case ' ': e.preventDefault(); next(); break;
+        case 'ArrowLeft': case 'PageUp': e.preventDefault(); prev(); break;
         case 'Home': e.preventDefault(); go(0); break;
         case 'End': e.preventDefault(); go(DECK.length-1); break;
         case 'm': case 'M': toggleSidebar(); break;
         case 'f': case 'F': toggleFullscreen(); break;
+        case 't': case 'T': toggleTheme(); break;
+        case 'p': case 'P': toggleProjectorMode(); break;
         case '/': e.preventDefault(); searchInput.focus(); break;
         case 'Escape': closeSidebar(); searchResults.hidden=true; break;
       }

@@ -531,6 +531,7 @@ body.sidebar-collapsed .sidebar {
 
 /* Fullscreen / Wide mode layout */
 body.fullscreen-active .slide,
+body.sidebar-collapsed .slide,
 :fullscreen .slide {
   max-width: 96vw;
   width: 96vw;
